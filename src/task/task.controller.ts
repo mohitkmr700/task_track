@@ -25,7 +25,7 @@ export class TaskController {
    * @param {string} email - Email to filter tasks
    * @returns {Promise<Array>} List of tasks
    */
-  @Get()
+  @Get('list')
   async listTasks(@Query('email') email: string) {
     return this.taskService.listTasks(email);
   }
@@ -36,7 +36,7 @@ export class TaskController {
    * @param {Object} body - Task data
    * @returns {Promise<Object>} Created task
    */
-  @Post()
+  @Post('create')
   async createTask(@Body() body: any) {
     return this.taskService.createTask(body);
   }
@@ -49,20 +49,20 @@ export class TaskController {
    */
   @Put('update')
   async updateTask(@Body() body: any) {
-    return this.taskService.updateTask(body);
+    return this.taskService.updateTask(body.id, body);
   }
 
   /**
    * Delete a task by ID
-   * Route: DELETE /tasks/delete/:id
-   * @param {string} id - ID of the task to delete
+   * Route: DELETE /tasks/remove
+   * @param {Object} body - Contains task ID
    * @returns {Promise<Object>} Deletion confirmation
    */
-  @Delete('delete/:id')
-  async deleteTask(@Param('id') id: string) {
-    console.log(`Received DELETE request for task id: ${id}`);
+  @Delete('remove')
+  async deleteTask(@Body() body: any) {
+    console.log(`Received DELETE request for task id: ${body.id}`);
     try {
-      const result = await this.taskService.deleteTask(id);
+      const result = await this.taskService.deleteTask(body.id);
       console.log('Delete result:', {"status": "success", "message": "Task deleted successfully"});
       return result;
     } catch (err) {
