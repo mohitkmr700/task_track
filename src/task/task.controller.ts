@@ -43,22 +43,22 @@ export class TaskController {
 
   /**
    * Update an existing task
-   * Route: PUT /tasks
+   * Route: PUT /tasks/update
    * @param {Object} body - Updated task data
    * @returns {Promise<Object>} Updated task
    */
-  @Put()
+  @Put('update')
   async updateTask(@Body() body: any) {
     return this.taskService.updateTask(body);
   }
 
   /**
    * Delete a task by ID
-   * Route: DELETE /tasks/:id
+   * Route: DELETE /tasks/delete/:id
    * @param {string} id - ID of the task to delete
    * @returns {Promise<Object>} Deletion confirmation
    */
-  @Delete(':id')
+  @Delete('delete/:id')
   async deleteTask(@Param('id') id: string) {
     return this.taskService.deleteTask(id);
   }
