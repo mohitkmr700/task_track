@@ -13,6 +13,12 @@ async function bootstrap() {
   // Create NestJS application instance
   const app = await NestFactory.create(AppModule);
   
+  // Enable CORS
+  app.enableCors();
+  
+  // Set global prefix for all routes
+  app.setGlobalPrefix('api');
+  
   // Get port from environment variables or use default
   const port = process.env.PORT || 3001;
   

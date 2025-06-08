@@ -32,7 +32,7 @@ export class TaskController {
 
   /**
    * Create a new task
-   * Route: POST /tasks
+   * Route: POST /tasks/create
    * @param {Object} body - Task data
    * @returns {Promise<Object>} Created task
    */
