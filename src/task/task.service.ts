@@ -67,20 +67,16 @@ export class TaskService {
   }
 
   /**
-   * Delete a task
-   * @param {string} email - Email of the task to delete
+   * Delete a task by ID
+   * @param {string} id - ID of the task to delete
    * @returns {Promise<Object>} Deletion confirmation
    * @throws {NotFoundException} When task is not found
    */
-  async deleteTask(email: string) {
-    // Find record by email
-    const records = await this.pb.collection('task').getFullList({
-      filter: `email = '${email}'`
-    });
-    if (!records.length) {
-      throw new NotFoundException('Task not found for the specified email.');
+  async deleteTask(id: string) {
+    try {
+      return await this.pb.collection('task').delete(id);
+    } catch (error) {
+      throw new NotFoundException('Task not found with the specified ID.');
     }
-    const recordId = records[0].id;
-    return this.pb.collection('task').delete(recordId);
   }
 }

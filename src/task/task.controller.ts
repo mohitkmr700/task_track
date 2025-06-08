@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Put, Delete, Get, Query } from '@nestjs/common';
+import { Controller, Post, Body, Put, Delete, Get, Query, Param } from '@nestjs/common';
 import { TaskService } from './task.service';
 
 /**
@@ -53,13 +53,13 @@ export class TaskController {
   }
 
   /**
-   * Delete a task
-   * Route: DELETE /tasks
-   * @param {string} email - Email of the task to delete
+   * Delete a task by ID
+   * Route: DELETE /tasks/:id
+   * @param {string} id - ID of the task to delete
    * @returns {Promise<Object>} Deletion confirmation
    */
-  @Delete()
-  async deleteTask(@Body('email') email: string) {
-    return this.taskService.deleteTask(email);
+  @Delete(':id')
+  async deleteTask(@Param('id') id: string) {
+    return this.taskService.deleteTask(id);
   }
 }
