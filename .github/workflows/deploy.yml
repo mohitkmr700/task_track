@@ -29,7 +29,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'EOF'
             cd /root/task-backend || exit 1
-            npm install --production
+            npm install
             npm run build
-            pm2 restart task-backend || pm2 start dist/main.js --name task-backend
+            pm2 restart task-backend --update-env || pm2 start dist/main.js --name task-backend
           EOF
