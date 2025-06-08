@@ -60,6 +60,15 @@ export class TaskController {
    */
   @Delete('delete/:id')
   async deleteTask(@Param('id') id: string) {
-    return this.taskService.deleteTask(id);
+    console.log(`Received DELETE request for task id: ${id}`);
+    try {
+      const result = await this.taskService.deleteTask(id);
+      console.log('Delete result:', {"status": "success", "message": "Task deleted successfully"});
+      return result;
+    } catch (err) {
+      console.error('Error deleting task:', err);
+      throw err;
+    }
   }
+  
 }
