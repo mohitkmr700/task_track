@@ -5,6 +5,11 @@ import { TaskService } from './task.service';
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
+  @Get('health')
+  healthCheck() {
+    return { status: 'ok' };
+  }
+
   @Get()
   async listTasks(@Query('email') email: string) {
     return this.taskService.listTasks(email);
