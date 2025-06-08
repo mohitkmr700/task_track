@@ -1,13 +1,14 @@
 import { Controller, Post, Body, Put, Delete, Get, Query } from '@nestjs/common';
 import { TaskService } from './task.service';
 
+
 @Controller('tasks')
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
   @Get('health')
   healthCheck() {
-    return { status: 'ok' };
+    return { status: 'ok' , statusCode: 200, message: 'Health check successful'};
   }
 
   @Get()
