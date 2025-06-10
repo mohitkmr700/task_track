@@ -13,8 +13,13 @@ async function bootstrap() {
   // Create NestJS application instance
   const app = await NestFactory.create(AppModule);
   
-  // Enable CORS
-  app.enableCors();
+  // Enable CORS with specific configuration
+  app.enableCors({
+    origin: ['http://localhost:4000', 'https://algoarena.co.in'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+  });
   
   // Set global prefix for all routes
   app.setGlobalPrefix('api');
