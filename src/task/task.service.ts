@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, Logger } from '@nestjs/common';
 import PocketBase from 'pocketbase';
 import * as dotenv from 'dotenv';
 dotenv.config();
@@ -13,7 +13,7 @@ export class TaskService {
 
   constructor() {
     // Initialize PocketBase client with URL from environment variables
-    this.pb = new PocketBase(process.env.POCKETBASE_URL);
+    this.pb = new PocketBase(process.env.POCKETBASE_URL || 'http://algoarena.co.in/pocketbase');
   }
 
   /**
@@ -43,6 +43,7 @@ export class TaskService {
    */
   async createTask(data: any) {
     // Check for duplicate task with the same title
+    try {
     const existingTasks = await this.pb.collection('task').getFullList({
       filter: `title = '${data.title}'`
     });
@@ -55,6 +56,10 @@ export class TaskService {
       message: 'Task created successfully',
       data: createdTask
     };
+  } catch (error) {
+    Logger.error(error);
+    throw new ConflictException('A task with this title already exists.');
+  }
   }
 
   /**
