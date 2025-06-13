@@ -13,7 +13,7 @@ export class TaskService {
 
   constructor() {
     // Initialize PocketBase client with URL from environment variables
-    this.pb = new PocketBase(process.env.POCKETBASE_URL || 'http://algoarena.co.in/pocketbase');
+    this.pb = new PocketBase(process.env.POCKETBASE_URL);
   }
 
   /**
