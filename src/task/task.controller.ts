@@ -3,15 +3,15 @@ import { TaskService } from './task.service';
 
 /**
  * TaskController handles all task-related HTTP requests
- * Base route: /tasks
+ * Base route: /api/tasks
  */
-@Controller('tasks')
+@Controller()
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
   /**
    * Health check endpoint
-   * Route: GET /tasks/health
+   * Route: GET /api/tasks/health
    * @returns {Object} Health status of the API
    */
   @Get('health')
@@ -21,7 +21,7 @@ export class TaskController {
 
   /**
    * Get all tasks for a specific email
-   * Route: GET /tasks?email={email}
+   * Route: GET /api/tasks/list?email={email}
    * @param {string} email - Email to filter tasks
    * @returns {Promise<Array>} List of tasks
    */
@@ -32,7 +32,7 @@ export class TaskController {
 
   /**
    * Create a new task
-   * Route: POST /tasks/create
+   * Route: POST /api/tasks/create
    * @param {Object} body - Task data
    * @returns {Promise<Object>} Created task
    */
@@ -43,7 +43,7 @@ export class TaskController {
 
   /**
    * Update an existing task
-   * Route: PUT /tasks/update
+   * Route: PUT /api/tasks/update
    * @param {Object} body - Updated task data
    * @returns {Promise<Object>} Updated task
    */
@@ -54,7 +54,7 @@ export class TaskController {
 
   /**
    * Delete a task by ID
-   * Route: DELETE /tasks/remove
+   * Route: DELETE /api/tasks/remove
    * @param {Object} body - Contains task ID
    * @returns {Promise<Object>} Deletion confirmation
    */
@@ -70,5 +70,4 @@ export class TaskController {
       throw err;
     }
   }
-  
 }

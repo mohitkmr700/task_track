@@ -21,9 +21,6 @@ async function bootstrap() {
     credentials: true,
   });
   
-  // Set global prefix for all routes
-  app.setGlobalPrefix('api');
-  
   // Get port from environment variables or use default
   const port = process.env.PORT || 3001;
   
