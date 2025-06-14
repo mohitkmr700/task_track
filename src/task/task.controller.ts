@@ -1,5 +1,6 @@
-import { Controller, Post, Body, Put, Delete, Get, Query, Param } from '@nestjs/common';
+import { Controller, Post, Body, Put, Delete, Get, Query, Param, BadRequestException } from '@nestjs/common';
 import { TaskService } from './task.service';
+import { Task } from './task.interface';
 
 /**
  * TaskController handles all task-related HTTP requests
@@ -11,7 +12,7 @@ export class TaskController {
 
   /**
    * Health check endpoint
-   * Route: GET /tasks/health
+   * Route: GET /health
    * @returns {Object} Health status of the API
    */
   @Get('health')
@@ -21,7 +22,7 @@ export class TaskController {
 
   /**
    * Get all tasks for a specific email
-   * Route: GET /tasks/list?email={email}
+   * Route: GET /list?email={email}
    * @param {string} email - Email to filter tasks
    * @returns {Promise<Array>} List of tasks
    */
@@ -32,42 +33,40 @@ export class TaskController {
 
   /**
    * Create a new task
-   * Route: POST /tasks/create
-   * @param {Object} body - Task data
-   * @returns {Promise<Object>} Created task
+   * Route: POST /create
+   * @param {Task} body - Task data
+   * @returns {Promise<Task>} Created task
    */
   @Post('create')
-  async createTask(@Body() body: any) {
+  async createTask(@Body() body: Task): Promise<Task> {
     return this.taskService.createTask(body);
   }
 
   /**
    * Update an existing task
-   * Route: PUT /tasks/update
-   * @param {Object} body - Updated task data
-   * @returns {Promise<Object>} Updated task
+   * Route: PUT /update
+   * @param {Task} body - Updated task data
+   * @returns {Promise<Task>} Updated task
    */
   @Put('update')
-  async updateTask(@Body() body: any) {
+  async updateTask(@Body() body: Task): Promise<Task> {
+    if (!body.id) {
+      throw new BadRequestException('Task ID is required for update');
+    }
     return this.taskService.updateTask(body.id, body);
   }
 
   /**
    * Delete a task by ID
-   * Route: DELETE /tasks/remove
+   * Route: DELETE /remove
    * @param {Object} body - Contains task ID
    * @returns {Promise<Object>} Deletion confirmation
    */
   @Delete('remove')
-  async deleteTask(@Body() body: any) {
-    console.log(`Received DELETE request for task id: ${body.id}`);
-    try {
-      const result = await this.taskService.deleteTask(body.id);
-      console.log('Delete result:', {"status": "success", "message": "Task deleted successfully"});
-      return result;
-    } catch (err) {
-      console.error('Error deleting task:', err);
-      throw err;
+  async deleteTask(@Body() body: { id: string }) {
+    if (!body.id) {
+      throw new BadRequestException('Task ID is required for deletion');
     }
+    return this.taskService.deleteTask(body.id);
   }
 }

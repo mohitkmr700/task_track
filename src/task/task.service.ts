@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, ConflictException, Logger } from '@nestjs/common';
 import PocketBase from 'pocketbase';
 import * as dotenv from 'dotenv';
+import { Task } from './task.interface';
 dotenv.config();
 
 /**
@@ -37,46 +38,32 @@ export class TaskService {
 
   /**
    * Create a new task
-   * @param {Object} data - Task data
-   * @returns {Promise<Object>} Created task with status
+   * @param {Task} data - Task data
+   * @returns {Promise<Task>} Created task
    * @throws {ConflictException} When a task with the same title exists
    */
-  async createTask(data: any) {
-    // Check for duplicate task with the same title
+  async createTask(data: Task): Promise<Task> {
     try {
-    const existingTasks = await this.pb.collection('task').getFullList({
-      filter: `title = '${data.title}'`
-    });
-    if (existingTasks.length) {
-      throw new ConflictException('A task with this title already exists.');
+      // Create the task record
+      const record = await this.pb.collection('task').create(data);
+      return record;
+    } catch (error) {
+      Logger.error('Error creating task:', error);
+      throw new ConflictException('Failed to create task. Please check your input data.');
     }
-    const createdTask = await this.pb.collection('task').create(data);
-    return {
-      statusCode: 201,
-      message: 'Task created successfully',
-      data: createdTask
-    };
-  } catch (error) {
-    Logger.error(error);
-    throw new ConflictException('A task with this title already exists.');
-  }
   }
 
   /**
    * Update an existing task
    * @param {string} id - ID of the task to update
-   * @param {Object} data - Updated task data
-   * @returns {Promise<Object>} Update confirmation with status
+   * @param {Task} data - Updated task data
+   * @returns {Promise<Task>} Updated task
    * @throws {NotFoundException} When task is not found
    */
-  async updateTask(id: string, data: any) {
+  async updateTask(id: string, data: Task): Promise<Task> {
     try {
       const updatedTask = await this.pb.collection('task').update(id, data);
-      return {
-        statusCode: 200,
-        message: 'Task updated successfully',
-        data: updatedTask
-      };
+      return updatedTask;
     } catch (error) {
       throw new NotFoundException('Task not found with the specified ID.');
     }
@@ -85,7 +72,7 @@ export class TaskService {
   /**
    * Delete a task by ID
    * @param {string} id - ID of the task to delete
-   * @returns {Promise<Object>} Deletion confirmation with status
+   * @returns {Promise<Object>} Deletion confirmation
    * @throws {NotFoundException} When task is not found
    */
   async deleteTask(id: string) {
