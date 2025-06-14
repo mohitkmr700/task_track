@@ -21,19 +21,24 @@ export class TaskService {
    * Retrieve tasks filtered by email
    * @param {string} email - Optional email to filter tasks
    * @returns {Promise<Object>} List of tasks with status
-   * @throws {NotFoundException} When no tasks are found
    */
   async listTasks(email?: string) {
-    const filter = email ? `email = '${email}'` : '';
-    const records = await this.pb.collection('task').getFullList({ filter });
-    if (!records.length) {
-      throw new NotFoundException('No tasks found for the specified email.');
+    try {
+      const filter = email ? `email = '${email}'` : '';
+      const records = await this.pb.collection('task').getFullList({ 
+        filter,
+        sort: '-created' // Sort by created date in descending order
+      });
+      
+      return {
+        statusCode: 200,
+        message: records.length ? 'Tasks retrieved successfully' : 'No tasks found',
+        data: records
+      };
+    } catch (error) {
+      Logger.error('Error listing tasks:', error);
+      throw new NotFoundException('Failed to retrieve tasks. Please try again.');
     }
-    return {
-      statusCode: 200,
-      message: 'Tasks retrieved successfully',
-      data: records
-    };
   }
 
   /**

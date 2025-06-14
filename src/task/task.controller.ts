@@ -26,19 +26,40 @@ export class TaskController {
    * @param {string} email - Email to filter tasks
    * @returns {Promise<Array>} List of tasks
    */
-  @Get('list')
+  @Get('list=all')
   async listTasks(@Query('email') email: string) {
     return this.taskService.listTasks(email);
   }
 
   /**
    * Create a new task
-   * Route: POST /create
+   * Route: POST /create-api
    * @param {Task} body - Task data
    * @returns {Promise<Task>} Created task
    */
-  @Post('create')
+  @Post('create-api')
   async createTask(@Body() body: Task): Promise<Task> {
+    // Validate required fields
+    if (!body.email) {
+      throw new BadRequestException('Email is required');
+    }
+    if (!body.title) {
+      throw new BadRequestException('Title is required');
+    }
+    if (!body.description) {
+      throw new BadRequestException('Description is required');
+    }
+
+    // Convert progress to number if provided
+    if (body.progress) {
+      body.progress = Number(body.progress);
+    }
+
+    // Convert is_done to boolean if provided
+    if (typeof body.is_done === 'string') {
+      body.is_done = body.is_done === 'true';
+    }
+
     return this.taskService.createTask(body);
   }
 
