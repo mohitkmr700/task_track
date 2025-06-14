@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException, ConflictException, Logger } from '@nestjs/common';
-import PocketBase from 'pocketbase';
 import * as dotenv from 'dotenv';
 import { Task } from './task.interface';
 dotenv.config();
@@ -10,11 +9,11 @@ dotenv.config();
  */
 @Injectable()
 export class TaskService {
-  private pb: PocketBase;
+  private pb: any;
 
-  constructor() {
-    // Initialize PocketBase client with URL from environment variables
-    this.pb = new PocketBase(process.env.POCKETBASE_URL || 'http://algoarena.co.in/pocketbase');
+  async onModuleInit() {
+    const PocketBase = (await import('pocketbase')).default;
+    this.pb = new PocketBase(process.env.POCKETBASE_URL );
   }
 
   /**
