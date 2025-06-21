@@ -54,7 +54,7 @@ jobs:
           export PORT=${{ secrets.PORT }}
           
           echo "🚀 Restarting with PM2..."
-          pm2 restart user-service || pm2 start dist/main.js --name user-service
+          pm2 restart user-service || pm2 start ecosystem.config.js
           echo "✅ PM2 process started/restarted."
           
           echo "📜 Showing last 50 lines of PM2 logs:"
