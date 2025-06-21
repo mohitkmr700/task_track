@@ -97,7 +97,15 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 
-# Task Track - NestJS + PocketBase
+# Task Track - NestJS + PocketBase + Redis
+
+## Features
+
+- **NestJS** (TypeScript) backend
+- **PocketBase** as the database
+- **Redis** for caching and performance optimization
+- **Health checks** for both database and cache
+- **Cache validation** to distinguish between cached and database responses
 
 ## Setup
 
@@ -108,30 +116,121 @@ Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 
 2. Create a `.env` file in the root directory with the following content:
    ```
+   # Redis Configuration
+   REDIS_HOST=localhost
+   REDIS_PORT=6379
+   REDIS_PASSWORD=
+   REDIS_DB=0
+
+   # PocketBase Configuration
    POCKETBASE_URL=your_pocketbase_url_here
+
+   # Application Configuration
+   NODE_ENV=development
    ```
 
-3. Start the NestJS server:
+3. Start Redis server (if not already running):
+   ```bash
+   # macOS with Homebrew
+   brew install redis
+   brew services start redis
+
+   # Ubuntu/Debian
+   sudo apt-get install redis-server
+   sudo systemctl start redis-server
+
+   # Windows
+   # Download and install Redis from https://redis.io/download
    ```
-   npm run start:dev
+
+4. Test Redis connection:
+   ```bash
+   npm run test:redis
    ```
+
+5. Start the NestJS server with Redis:
+   ```bash
+   npm run start:redis
+   ```
+
+## Redis Integration
+
+### Connection Logs
+When you start the application, you'll see Redis connection logs:
+- ✅ **Redis connected successfully** - Redis is connected
+- 🚀 **Redis is ready to accept commands** - Redis is ready
+- ❌ **Redis connection error** - Connection failed
+- 🔌 **Redis connection closed** - Connection closed
+- 🔄 **Redis reconnecting** - Attempting to reconnect
+
+### Health Check
+Test Redis connectivity using the health check endpoint:
+```bash
+curl http://localhost:3000/health
+```
+
+Response includes both database and cache health:
+```json
+{
+  "timestamp": "2024-01-01T00:00:00.000Z",
+  "database": {
+    "status": "healthy",
+    "message": "Database is responding (45ms)",
+    "timestamp": "2024-01-01T00:00:00.000Z"
+  },
+  "cache": {
+    "status": "healthy",
+    "message": "Redis is responding (2ms)",
+    "timestamp": "2024-01-01T00:00:00.000Z"
+  },
+  "overall": "healthy"
+}
+```
+
+### Caching Features
+- **Task List Caching**: Tasks are cached for 5 minutes
+- **Individual Task Caching**: Single tasks are cached for 5 minutes
+- **Cache Invalidation**: Cache is automatically invalidated when tasks are created, updated, or deleted
+- **Cache Validation**: All responses include source information (`"source": "cache"` or `"source": "database"`)
 
 ## Project Structure
 
-- NestJS (TypeScript) backend
-- PocketBase as the database
+```
+src/
+├── config/
+│   └── redis.config.ts          # Redis configuration with validation
+├── modules/
+│   └── redis.module.ts          # Redis module (global)
+├── providers/
+│   └── redis.provider.ts        # Redis provider with connection events
+├── services/
+│   └── redis.service.ts         # Redis service with caching operations
+├── task/
+│   ├── task.controller.ts       # Task endpoints with health check
+│   ├── task.service.ts          # Task service with Redis caching
+│   ├── task.module.ts           # Task module
+│   └── task.interface.ts        # Task interface
+└── app.module.ts                # Main app module with ConfigModule
+```
 
 ## API Endpoints
 
+### Health Check
+- **GET** `/health` - Check database and cache health
+
 ### List Tasks
-- **GET** `/tasks?email=example@example.com`
-  - Returns a list of tasks for the specified email.
-  - If no tasks are found, returns a 404 error.
+- **GET** `/list=all?email=example@example.com`
+  - Returns a list of tasks for the specified email (cached for 5 minutes)
+  - Response includes cache information and source
+
+### Get Single Task
+- **GET** `/task/:id`
+  - Returns a single task by ID (cached for 5 minutes)
+  - Response includes cache information and source
 
 ### Create Task
-- **POST** `/tasks`
-  - Creates a new task.
-  - Prevents duplicate tasks with the same title (returns a 409 error if a duplicate is found).
+- **POST** `/create-api`
+  - Creates a new task and invalidates related caches
   - Example request:
     ```json
     {
@@ -146,12 +245,12 @@ Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
     ```
 
 ### Update Task
-- **PUT** `/tasks`
-  - Updates a task based on the provided email.
-  - If the task is not found, returns a 404 error.
+- **PUT** `/update`
+  - Updates a task and invalidates related caches
   - Example request:
     ```json
     {
+      "id": "task_id",
       "title": "Updated Task",
       "description": "Updated Description",
       "progress": 456,
@@ -163,41 +262,57 @@ Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
     ```
 
 ### Delete Task
-- **DELETE** `/tasks`
-  - Deletes a task based on the provided email.
-  - If the task is not found, returns a 404 error.
+- **DELETE** `/remove`
+  - Deletes a task and invalidates related caches
   - Example request:
     ```json
     {
-      "email": "test@example.com"
+      "id": "task_id"
     }
     ```
 
+## Available Scripts
+
+```bash
+# Development
+npm run start:dev          # Start in development mode
+npm run start:redis        # Start with Redis logging
+npm run start:debug        # Start in debug mode
+
+# Testing
+npm run test:redis         # Test Redis connection
+npm run test               # Run unit tests
+npm run test:e2e           # Run e2e tests
+
+# Build
+npm run build              # Build the application
+npm run start:prod         # Start in production mode
+```
+
 ## Error Handling
 
-- **404 Not Found**: Returned when no tasks are found for the specified email.
-- **409 Conflict**: Returned when attempting to create a task with a title that already exists.
+- **404 Not Found**: Returned when no tasks are found for the specified email or ID
+- **409 Conflict**: Returned when attempting to create a task with a title that already exists
+- **Redis Connection Errors**: Logged to console with detailed error information
 
-## Commands
+## Performance Monitoring
 
-- Install NestJS CLI globally (if not already):
-  ```
-  npm i -g @nestjs/cli
-  ```
-- Create a new NestJS project:
-  ```
-  nest new . --package-manager npm
-  ```
-- Install dependencies:
-  ```
-  npm install pocketbase dotenv
-  ```
-- Start the server:
-  ```
-  npm run start:dev
-  ```
+- Cache hits are logged as: `Cache hit for tasks list (email: user@example.com)`
+- Cache misses are logged as: `Cache miss for tasks list (email: user@example.com), fetching from database`
+- Cache operations are logged with debug level
+- Health check endpoint provides response times for both database and cache
 
-## Notes
+## Troubleshooting
 
-- Make sure PocketBase is running and accessible at the URL specified in `.env`.
-- Do not commit your `.env` file to version control.
+### Redis Connection Issues
+1. Ensure Redis server is running
+2. Check `REDIS_HOST` and `REDIS_PORT` in environment
+3. Verify Redis server is accessible from your application
+4. Use `npm run test:redis` to test connectivity
+
+### Cache Issues
+1. Check Redis logs in console output
+2. Use health check endpoint to verify connectivity
+3. Monitor cache hit/miss logs in application logs
+
+For detailed Redis setup instructions, see [REDIS_SETUP.md](./REDIS_SETUP.md).

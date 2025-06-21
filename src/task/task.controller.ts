@@ -1,6 +1,7 @@
-import { Controller, Post, Body, Put, Delete, Get, Query, Param, BadRequestException } from '@nestjs/common';
+import { Controller, Post, Body, Put, Delete, Get, Query, Param, BadRequestException, Res } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { Task } from './task.interface';
+import { Response } from 'express';
 
 /**
  * TaskController handles all task-related HTTP requests
@@ -11,13 +12,13 @@ export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
   /**
-   * Health check endpoint
+   * Health check endpoint with database and cache validation
    * Route: GET /health
-   * @returns {Object} Health status of the API
+   * @returns {Object} Health status of the API, database, and cache
    */
   @Get('health')
-  healthCheck() {
-    return { status: 'ok', statusCode: 200, message: 'Health check successful' };
+  async healthCheck() {
+    return this.taskService.healthCheck();
   }
 
   /**
@@ -27,8 +28,24 @@ export class TaskController {
    * @returns {Promise<Array>} List of tasks
    */
   @Get('list=all')
-  async listTasks(@Query('email') email: string) {
-    return this.taskService.listTasks(email);
+  async listTasks(@Query('email') email: string, @Res() res: Response) {
+    const result = await this.taskService.listTasks(email);
+    res.setHeader('x-data-source', result.source || 'unknown');
+    return res.json(result);
+  }
+
+  /**
+   * Get a single task by ID
+   * Route: GET /task/:id
+   * @param {string} id - Task ID
+   * @returns {Promise<Task>} Task data
+   */
+  @Get('task/:id')
+  async getTaskById(@Param('id') id: string) {
+    if (!id) {
+      throw new BadRequestException('Task ID is required');
+    }
+    return this.taskService.getTaskById(id);
   }
 
   /**

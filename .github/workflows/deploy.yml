@@ -40,7 +40,12 @@ jobs:
           
           echo "⚙️ Building project..."
           npm run build
+          echo "✅ Build complete."
           
           echo "🚀 Restarting with PM2..."
           pm2 restart user-service || pm2 start dist/main.js --name user-service
+          echo "✅ PM2 process started/restarted."
+          
+          echo "📜 Showing last 50 lines of PM2 logs:"
+          pm2 logs user-service --lines 50 --nostream
         EOF
