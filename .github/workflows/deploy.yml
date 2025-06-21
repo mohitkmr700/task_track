@@ -42,6 +42,17 @@ jobs:
           npm run build
           echo "✅ Build complete."
           
+          echo "🔧 Setting Redis environment variables..."
+          export REDIS_HOST=${{ secrets.REDIS_HOST }}
+          export REDIS_PORT=${{ secrets.REDIS_PORT }}
+          export REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}
+          
+          echo "🔧 Setting PocketBase environment variables..."
+          export POCKETBASE_ADMIN_EMAIL=${{ secrets.POCKETBASE_ADMIN_EMAIL }}
+          export POCKETBASE_ADMIN_PASSWORD=${{ secrets.POCKETBASE_ADMIN_PASSWORD }}
+          export POCKETBASE_URL=${{ secrets.POCKETBASE_URL }}
+          export PORT=${{ secrets.PORT }}
+          
           echo "🚀 Restarting with PM2..."
           pm2 restart user-service || pm2 start dist/main.js --name user-service
           echo "✅ PM2 process started/restarted."
