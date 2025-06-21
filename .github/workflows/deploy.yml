@@ -24,39 +24,41 @@ jobs:
       run: |
         ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts
 
-    - name: SSH and deploy
+    - name: Deploy code to EC2 via rsync
+      run: |
+        rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./ \
+          ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/home/ubuntu/user_service/
+
+    - name: SSH and build + restart PM2
       run: |
         ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'EOF'
           export NVM_DIR="$HOME/.nvm"
           [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
           
           cd ~/user_service
-          
-          echo "🔄 Pulling latest code..."
-          git pull origin main
-          
+
           echo "📦 Installing dependencies..."
           npm install
-          
+
           echo "⚙️ Building project..."
           npm run build
           echo "✅ Build complete."
-          
+
           echo "🔧 Setting Redis environment variables..."
           export REDIS_HOST=${{ secrets.REDIS_HOST }}
           export REDIS_PORT=${{ secrets.REDIS_PORT }}
           export REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}
-          
+
           echo "🔧 Setting PocketBase environment variables..."
           export POCKETBASE_ADMIN_EMAIL=${{ secrets.POCKETBASE_ADMIN_EMAIL }}
           export POCKETBASE_ADMIN_PASSWORD=${{ secrets.POCKETBASE_ADMIN_PASSWORD }}
           export POCKETBASE_URL=${{ secrets.POCKETBASE_URL }}
           export PORT=${{ secrets.PORT }}
-          
+
           echo "🚀 Restarting with PM2..."
           pm2 restart user-service || pm2 start ecosystem.config.js
           echo "✅ PM2 process started/restarted."
-          
-          echo "📜 Showing last 50 lines of PM2 logs:"
-          pm2 logs user-service --lines 50 --nostream
+
+          echo "📜 Showing last 20 lines of PM2 logs:"
+          pm2 logs user-service --lines 20 --nostream
         EOF
