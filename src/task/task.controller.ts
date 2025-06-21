@@ -23,29 +23,48 @@ export class TaskController {
 
   /**
    * Get all tasks for a specific email
-   * Route: GET /list?email={email}
+   * Route: GET /list=all?email={email}&cache={cache}
    * @param {string} email - Email to filter tasks
+   * @param {string} cache - Cache control ('none' to bypass cache)
+   * @param {Response} res - Express response object
    * @returns {Promise<Array>} List of tasks
    */
   @Get('list=all')
-  async listTasks(@Query('email') email: string, @Res() res: Response) {
-    const result = await this.taskService.listTasks(email);
+  async listTasks(
+    @Query('email') email: string,
+    @Query('cache') cache: string,
+    @Res() res: Response
+  ) {
+    const options = {
+      sort: '-created',
+      filter: '',
+      cache: cache || undefined,
+    };
+
+    const result = await this.taskService.getAllTasks(email, options);
     res.setHeader('x-data-source', result.source || 'unknown');
     return res.json(result);
   }
 
   /**
    * Get a single task by ID
-   * Route: GET /task/:id
+   * Route: GET /task/:id?cache={cache}
    * @param {string} id - Task ID
+   * @param {string} cache - Cache control ('none' to bypass cache)
    * @returns {Promise<Task>} Task data
    */
   @Get('task/:id')
-  async getTaskById(@Param('id') id: string) {
+  async getTaskById(
+    @Param('id') id: string,
+    @Query('cache') cache: string
+  ) {
     if (!id) {
       throw new BadRequestException('Task ID is required');
     }
-    return this.taskService.getTaskById(id);
+    const options = {
+      cache: cache || undefined,
+    };
+    return this.taskService.getTaskById(id, options);
   }
 
   /**

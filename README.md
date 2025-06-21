@@ -1,320 +1,517 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# User Service API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
-
-```bash
-$ npm install
-```
-
-## Compile and run the project
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
-
-# Task Track - NestJS + PocketBase + Redis
-
-<!-- Last updated: $(date) -->
+A NestJS-based microservice that provides CRUD operations for tasks and permissions using PocketBase as the database and Redis for caching.
 
 ## Features
 
-- **NestJS** (TypeScript) backend
-- **PocketBase** as the database
-- **Redis** for caching and performance optimization
-- **Health checks** for both database and cache
-- **Cache validation** to distinguish between cached and database responses
-
-## Setup
-
-1. Install dependencies:
-   ```
-   npm install
-   ```
-
-2. Create a `.env` file in the root directory with the following content:
-   ```
-   # Redis Configuration
-   REDIS_HOST=localhost
-   REDIS_PORT=6379
-   REDIS_PASSWORD=
-   REDIS_DB=0
-
-   # PocketBase Configuration
-   POCKETBASE_URL=your_pocketbase_url_here
-
-   # Application Configuration
-   NODE_ENV=development
-   ```
-
-3. Start Redis server (if not already running):
-   ```bash
-   # macOS with Homebrew
-   brew install redis
-   brew services start redis
-
-   # Ubuntu/Debian
-   sudo apt-get install redis-server
-   sudo systemctl start redis-server
-
-   # Windows
-   # Download and install Redis from https://redis.io/download
-   ```
-
-4. Test Redis connection:
-   ```bash
-   npm run test:redis
-   ```
-
-5. Start the NestJS server with Redis:
-   ```bash
-   npm run start:redis
-   ```
-
-## Redis Integration
-
-### Connection Logs
-When you start the application, you'll see Redis connection logs:
-- ✅ **Redis connected successfully** - Redis is connected
-- 🚀 **Redis is ready to accept commands** - Redis is ready
-- ❌ **Redis connection error** - Connection failed
-- 🔌 **Redis connection closed** - Connection closed
-- 🔄 **Redis reconnecting** - Attempting to reconnect
-
-### Health Check
-Test Redis connectivity using the health check endpoint:
-```bash
-curl http://localhost:3000/health
-```
-
-Response includes both database and cache health:
-```json
-{
-  "timestamp": "2024-01-01T00:00:00.000Z",
-  "database": {
-    "status": "healthy",
-    "message": "Database is responding (45ms)",
-    "timestamp": "2024-01-01T00:00:00.000Z"
-  },
-  "cache": {
-    "status": "healthy",
-    "message": "Redis is responding (2ms)",
-    "timestamp": "2024-01-01T00:00:00.000Z"
-  },
-  "overall": "healthy"
-}
-```
-
-### Caching Features
-- **Task List Caching**: Tasks are cached for 5 minutes
-- **Individual Task Caching**: Single tasks are cached for 5 minutes
-- **Cache Invalidation**: Cache is automatically invalidated when tasks are created, updated, or deleted
-- **Cache Validation**: All responses include source information (`"source": "cache"` or `"source": "database"`)
+- **Common PocketBase Service**: Reusable service for all PocketBase operations
+- **Redis Caching**: Automatic caching with configurable TTL
+- **Cache Bypass**: Force database fetch with `cache=none` parameter
+- **CRUD Operations**: Create, Read, Update, Delete for tasks and permissions
+- **Health Checks**: Database and cache health monitoring
+- **Pagination Support**: Both paginated and full list endpoints
+- **Filtering**: Email-based filtering and custom filters
+- **Sorting**: Configurable sorting options
 
 ## Project Structure
 
 ```
-src/
-├── config/
-│   └── redis.config.ts          # Redis configuration with validation
-├── modules/
-│   └── redis.module.ts          # Redis module (global)
-├── providers/
-│   └── redis.provider.ts        # Redis provider with connection events
-├── services/
-│   └── redis.service.ts         # Redis service with caching operations
-├── task/
-│   ├── task.controller.ts       # Task endpoints with health check
-│   ├── task.service.ts          # Task service with Redis caching
-│   ├── task.module.ts           # Task module
-│   └── task.interface.ts        # Task interface
-└── app.module.ts                # Main app module with ConfigModule
+user_service/
+├── src/
+│   ├── services/
+│   │   ├── pocketbase.service.ts    # Common PocketBase service
+│   │   ├── redis.service.ts         # Redis service
+│   │   └── startup.service.ts       # Startup service
+│   ├── task/
+│   │   ├── task.controller.ts       # Task endpoints
+│   │   ├── task.service.ts          # Task business logic
+│   │   ├── task.module.ts           # Task module
+│   │   └── task.interface.ts        # Task data structure
+│   ├── permission/
+│   │   ├── permission.controller.ts # Permission endpoints
+│   │   ├── permission.service.ts    # Permission business logic
+│   │   ├── permission.module.ts     # Permission module
+│   │   └── permission.interface.ts  # Permission data structure
+│   ├── modules/
+│   │   └── redis.module.ts          # Redis module
+│   ├── providers/
+│   │   └── redis.provider.ts        # Redis provider
+│   ├── config/
+│   │   └── redis.config.ts          # Redis configuration
+│   ├── app.controller.ts            # Main app controller
+│   ├── app.module.ts                # Main app module
+│   └── main.ts                      # Application entry point
+├── package.json
+└── README.md                        # This file
+```
+
+## Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+# PocketBase Configuration
+POCKETBASE_URL=https://pocketbase.algoarena.co.in
+
+# Redis Configuration
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=
+REDIS_DB=0
+
+# Application Configuration
+PORT=3000
+NODE_ENV=development
+```
+
+## Installation
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run start:dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm run start:prod
 ```
 
 ## API Endpoints
 
-### Health Check
-- **GET** `/health` - Check database and cache health
-
-### List Tasks
-- **GET** `/list=all?email=example@example.com`
-  - Returns a list of tasks for the specified email (cached for 5 minutes)
-  - Response includes cache information and source
-
-### Get Single Task
-- **GET** `/task/:id`
-  - Returns a single task by ID (cached for 5 minutes)
-  - Response includes cache information and source
-
-### Create Task
-- **POST** `/create-api`
-  - Creates a new task and invalidates related caches
-  - Example request:
-    ```json
-    {
-      "title": "test",
-      "description": "test",
-      "progress": 123,
-      "deadline": "2022-01-01 10:00:00.123Z",
-      "is_done": true,
-      "completed_at": "2022-01-01 10:00:00.123Z",
-      "email": "test@example.com"
-    }
-    ```
-
-### Update Task
-- **PUT** `/update`
-  - Updates a task and invalidates related caches
-  - Example request:
-    ```json
-    {
-      "id": "task_id",
-      "title": "Updated Task",
-      "description": "Updated Description",
-      "progress": 456,
-      "deadline": "2022-01-01 10:00:00.123Z",
-      "is_done": false,
-      "completed_at": "2022-01-01 10:00:00.123Z",
-      "email": "test@example.com"
-    }
-    ```
-
-### Delete Task
-- **DELETE** `/remove`
-  - Deletes a task and invalidates related caches
-  - Example request:
-    ```json
-    {
-      "id": "task_id"
-    }
-    ```
-
-## Available Scripts
-
-```bash
-# Development
-npm run start:dev          # Start in development mode
-npm run start:redis        # Start with Redis logging
-npm run start:debug        # Start in debug mode
-
-# Testing
-npm run test:redis         # Test Redis connection
-npm run test               # Run unit tests
-npm run test:e2e           # Run e2e tests
-
-# Build
-npm run build              # Build the application
-npm run start:prod         # Start in production mode
+### Base URL
+```
+http://localhost:3000
 ```
 
-## Error Handling
+## Task Module
 
-- **404 Not Found**: Returned when no tasks are found for the specified email or ID
-- **409 Conflict**: Returned when attempting to create a task with a title that already exists
-- **Redis Connection Errors**: Logged to console with detailed error information
+### Health Check
+```
+GET /health
+```
+Returns health status of database and cache.
 
-## Performance Monitoring
+### List Tasks
+```
+GET /list=all?email={email}&cache={cache}
+```
+- `email` (optional): Filter by email
+- `cache` (optional): Cache control - use 'none' to bypass cache
 
-- Cache hits are logged as: `Cache hit for tasks list (email: user@example.com)`
-- Cache misses are logged as: `Cache miss for tasks list (email: user@example.com), fetching from database`
-- Cache operations are logged with debug level
-- Health check endpoint provides response times for both database and cache
+### Get Task by ID
+```
+GET /task/{id}?cache={cache}
+```
+Returns a single task by ID.
+
+### Create Task
+```
+POST /create-api
+```
+Body:
+```json
+{
+  "email": "user@example.com",
+  "title": "Task Title",
+  "description": "Task Description",
+  "progress": 50,
+  "deadline": "2024-12-31T23:59:59.000Z",
+  "is_done": false
+}
+```
+
+### Update Task
+```
+PUT /update
+```
+Body:
+```json
+{
+  "id": "RECORD_ID",
+  "email": "user@example.com",
+  "title": "Updated Task Title",
+  "description": "Updated Task Description",
+  "progress": 75,
+  "deadline": "2024-12-31T23:59:59.000Z",
+  "is_done": true
+}
+```
+
+### Delete Task
+```
+DELETE /remove
+```
+Body:
+```json
+{
+  "id": "RECORD_ID"
+}
+```
+
+## Permission Module
+
+### Health Check
+```
+GET /permissions/health
+```
+Returns health status of database and cache.
+
+### List Permissions (Paginated)
+```
+GET /permissions/list?email={email}&page={page}&perPage={perPage}&sort={sort}&filter={filter}&cache={cache}
+```
+- `email` (optional): Filter by email
+- `page` (optional): Page number (default: 1)
+- `perPage` (optional): Items per page (default: 50)
+- `sort` (optional): Sort field (default: '-created')
+- `filter` (optional): Additional filter string
+- `cache` (optional): Cache control - use 'none' to bypass cache
+
+### Get All Permissions
+```
+GET /permissions/all?email={email}&sort={sort}&filter={filter}&cache={cache}
+```
+Returns all permissions without pagination.
+
+### Get Modules List
+```
+GET /permissions/modules?sort={sort}&filter={filter}&cache={cache}
+```
+Returns all modules from the control system.
+
+### Get Permission by ID
+```
+GET /permissions/{id}?cache={cache}
+```
+Returns a single permission by ID.
+
+### Get First Permission
+```
+GET /permissions/first?filter={filter}&expand={expand}&cache={cache}
+```
+Returns the first permission that matches the filter.
+
+### Create Permission
+```
+POST /permissions/create
+```
+Body:
+```json
+{
+  "email": "user@example.com",
+  "modules": "{\"module1\": true, \"module2\": false}",
+  "permissions": "{\"read\": true, \"write\": false}",
+  "updated_by": "admin@example.com"
+}
+```
+
+### Update Permission
+```
+PUT /permissions/update
+```
+Body:
+```json
+{
+  "id": "RECORD_ID",
+  "email": "user@example.com",
+  "modules": "{\"module1\": true, \"module2\": true}",
+  "permissions": "{\"read\": true, \"write\": true}",
+  "updated_by": "admin@example.com"
+}
+```
+
+### Delete Permission
+```
+DELETE /permissions/delete
+```
+Body:
+```json
+{
+  "id": "RECORD_ID"
+}
+```
+
+## Cache Control
+
+### Normal Cache Behavior
+By default, all GET requests use Redis caching:
+- First request: Fetches from database and caches the result
+- Subsequent requests: Returns cached data (if available)
+- Cache TTL: 5 minutes
+
+### Bypass Cache
+Use `cache=none` parameter to force database fetch:
+```
+GET /list=all?email=test@example.com&cache=none
+```
+
+**What happens with `cache=none`:**
+1. Bypasses existing cache
+2. Fetches fresh data from database
+3. Updates cache with new data
+4. Returns fresh data with source: "database (cache bypassed)"
+
+**Use cases:**
+- Force refresh when you know data has changed
+- Debugging cache issues
+- Ensuring data consistency
+- Real-time data requirements
+
+## Data Structures
+
+### Task Interface
+```typescript
+interface Task {
+  id?: string;
+  title?: string;
+  description?: string;
+  progress?: number;
+  deadline?: string;
+  is_done?: boolean;
+  completed_at?: string;
+  email?: string;
+  created?: string;
+  updated?: string;
+  collectionId?: string;
+  collectionName?: string;
+}
+```
+
+### Permission Interface
+```typescript
+interface Permission {
+  id?: string;
+  modules?: string; // JSON string
+  permissions?: string; // JSON string
+  updated_by?: string;
+  email?: string;
+  created?: string;
+  updated?: string;
+  collectionId?: string;
+  collectionName?: string;
+}
+```
+
+## Common PocketBase Service
+
+The application uses a common `PocketBaseService` that provides:
+
+- **Dynamic Collection Support**: Works with any PocketBase collection
+- **Caching**: Automatic Redis caching with invalidation
+- **Cache Bypass**: Force database fetch with cache refresh
+- **Error Handling**: Consistent error handling across all operations
+- **Health Monitoring**: Database connection health checks
+- **Flexible Filtering**: Support for complex filters and sorting
+
+### Usage in New Modules
+
+To create a new module using the common PocketBase service:
+
+```typescript
+import { PocketBaseService } from '../services/pocketbase.service';
+
+@Injectable()
+export class YourService {
+  constructor(private readonly pocketBaseService: PocketBaseService) {}
+
+  async getData() {
+    return this.pocketBaseService.getList(
+      'your_collection',
+      { page: 1, perPage: 50, cache: 'none' },
+      'your_cache_prefix:',
+      'user@example.com'
+    );
+  }
+}
+```
+
+## Caching
+
+The application uses Redis for caching with:
+- **TTL**: 5 minutes for most operations
+- **Cache Keys**: Prefixed with module name for easy management
+- **Invalidation**: Automatic cache invalidation on create/update/delete operations
+- **Cache Headers**: Response includes `x-data-source` header indicating cache status
+- **Cache Bypass**: Use `cache=none` parameter to force database fetch and refresh cache
+
+## Response Headers
+
+All GET endpoints include:
+- `x-data-source`: Indicates data source
+  - `cache`: Data came from Redis cache
+  - `database`: Data came from database
+  - `database (cache bypassed)`: Data came from database due to cache bypass
+
+## Example Usage
+
+### Task Operations
+
+#### Get Tasks with Cache
+```bash
+curl -X GET "http://localhost:3000/list=all?email=test@example.com" \
+  -H "Content-Type: application/json"
+```
+
+#### Get Tasks Bypassing Cache
+```bash
+curl -X GET "http://localhost:3000/list=all?email=test@example.com&cache=none" \
+  -H "Content-Type: application/json"
+```
+
+#### Get Task by ID
+```bash
+curl -X GET "http://localhost:3000/task/RECORD_ID?cache=none" \
+  -H "Content-Type: application/json"
+```
+
+#### Create Task
+```bash
+curl -X POST "http://localhost:3000/create-api" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "test@example.com",
+    "title": "New Task",
+    "description": "Task description",
+    "progress": 0,
+    "is_done": false
+  }'
+```
+
+### Permission Operations
+
+#### Get All Permissions for Email
+```bash
+curl -X GET "http://localhost:3000/permissions/all?email=test@example.com" \
+  -H "Content-Type: application/json"
+```
+
+#### Get All Permissions (Bypass Cache)
+```bash
+curl -X GET "http://localhost:3000/permissions/all?email=test@example.com&cache=none" \
+  -H "Content-Type: application/json"
+```
+
+#### Get Modules List
+```bash
+curl -X GET "http://localhost:3000/permissions/modules" \
+  -H "Content-Type: application/json"
+```
+
+#### Create Permission
+```bash
+curl -X POST "http://localhost:3000/permissions/create" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "test@example.com",
+    "modules": "{\"dashboard\": true, \"users\": false}",
+    "permissions": "{\"read\": true, \"write\": false}",
+    "updated_by": "admin@example.com"
+  }'
+```
+
+## Health Checks
+
+### Application Health
+```bash
+curl -X GET "http://localhost:3000/health"
+```
+
+### Task Module Health
+```bash
+curl -X GET "http://localhost:3000/health"
+```
+
+### Permission Module Health
+```bash
+curl -X GET "http://localhost:3000/permissions/health"
+```
+
+## Development
+
+### Running Tests
+```bash
+# Unit tests
+npm run test
+
+# E2E tests
+npm run test:e2e
+
+# Test coverage
+npm run test:cov
+```
+
+### Linting
+```bash
+# Lint
+npm run lint
+
+# Lint and fix
+npm run lint:fix
+```
+
+## Production Deployment
+
+### Build
+```bash
+npm run build
+```
+
+### Start Production Server
+```bash
+npm run start:prod
+```
+
+### Using PM2
+```bash
+# Install PM2 globally
+npm install -g pm2
+
+# Start application
+pm2 start ecosystem.config.js
+
+# Monitor
+pm2 monit
+
+# View logs
+pm2 logs
+```
 
 ## Troubleshooting
 
-### Redis Connection Issues
-1. Ensure Redis server is running
-2. Check `REDIS_HOST` and `REDIS_PORT` in environment
-3. Verify Redis server is accessible from your application
-4. Use `npm run test:redis` to test connectivity
+### Common Issues
 
-### Cache Issues
-1. Check Redis logs in console output
-2. Use health check endpoint to verify connectivity
-3. Monitor cache hit/miss logs in application logs
+1. **Redis Connection Failed**
+   - Check Redis server is running
+   - Verify Redis configuration in `.env`
+   - Check Redis host and port
 
-For detailed Redis setup instructions, see [REDIS_SETUP.md](./REDIS_SETUP.md).
+2. **PocketBase Connection Failed**
+   - Verify `POCKETBASE_URL` in `.env`
+   - Check PocketBase server is accessible
+   - Verify network connectivity
+
+3. **Cache Not Working**
+   - Check Redis connection
+   - Verify cache TTL settings
+   - Use `cache=none` to bypass cache for testing
+
+4. **Data Not Updating**
+   - Check if cache invalidation is working
+   - Use `cache=none` to force database fetch
+   - Verify PocketBase collection permissions
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License.

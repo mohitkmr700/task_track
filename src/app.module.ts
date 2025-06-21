@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { TaskModule } from './task/task.module';
+import { PermissionModule } from './permission/permission.module';
 import { RedisModule } from './modules/redis.module';
 import redisConfig from './config/redis.config';
 
@@ -18,6 +19,7 @@ import redisConfig from './config/redis.config';
     }),
     RedisModule,
     TaskModule,
+    PermissionModule,
   ],
   controllers: [AppController],
 })
