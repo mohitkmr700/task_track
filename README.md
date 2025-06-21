@@ -99,6 +99,8 @@ Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 
 # Task Track - NestJS + PocketBase + Redis
 
+<!-- Last updated: $(date) -->
+
 ## Features
 
 - **NestJS** (TypeScript) backend
