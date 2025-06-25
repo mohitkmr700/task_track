@@ -55,7 +55,7 @@ export class PermissionService {
           email
         );
         
-        const latestPermission = result.data.length > 0 ? result.data[0] : null;
+        const latestPermission = result.data.length > 0 ? this.convertToLocalTime(result.data[0]) : null;
         
         const response = {
           statusCode: 200,
@@ -96,7 +96,7 @@ export class PermissionService {
         email
       );
       
-      const latestPermission = result.data.length > 0 ? result.data[0] : null;
+      const latestPermission = result.data.length > 0 ? this.convertToLocalTime(result.data[0]) : null;
       
       const response = {
         statusCode: 200,
@@ -115,5 +115,32 @@ export class PermissionService {
       this.logger.error('Error getting latest permission:', error);
       throw error;
     }
+  }
+
+  /**
+   * Convert timestamps to local time
+   * @param permission - Permission object with timestamps
+   * @returns Permission object with local time timestamps
+   */
+  private convertToLocalTime(permission: any): any {
+    if (!permission) return permission;
+
+    const converted = { ...permission };
+
+    // Convert created timestamp to local time (keeping ISO format)
+    if (converted.created) {
+      const utcDate = new Date(converted.created);
+      const localDate = new Date(utcDate.getTime() - (utcDate.getTimezoneOffset() * 60000));
+      converted.created = localDate.toISOString().replace('Z', '');
+    }
+
+    // Convert updated timestamp to local time (keeping ISO format)
+    if (converted.updated) {
+      const utcDate = new Date(converted.updated);
+      const localDate = new Date(utcDate.getTime() - (utcDate.getTimezoneOffset() * 60000));
+      converted.updated = localDate.toISOString().replace('Z', '');
+    }
+
+    return converted;
   }
 } 
