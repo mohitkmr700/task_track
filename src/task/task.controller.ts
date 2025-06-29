@@ -23,22 +23,19 @@ export class TaskController {
 
   /**
    * Get all tasks for a specific email
-   * Route: GET /list=all?email={email}&cache={cache}
+   * Route: GET /list=all?email={email}
    * @param {string} email - Email to filter tasks
-   * @param {string} cache - Cache control ('none' to bypass cache)
    * @param {Response} res - Express response object
    * @returns {Promise<Array>} List of tasks
    */
   @Get('list=all')
   async listTasks(
     @Query('email') email: string,
-    @Query('cache') cache: string,
     @Res() res: Response
   ) {
     const options = {
       sort: '-created',
       filter: '',
-      cache: cache || undefined,
     };
 
     const result = await this.taskService.getAllTasks(email, options);

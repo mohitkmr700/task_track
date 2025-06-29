@@ -36,15 +36,17 @@ export class TaskService {
   }
 
   /**
-   * Get all tasks without pagination
+   * Get all tasks without pagination (no caching)
    * @param {string} email - Optional email to filter tasks
    * @param {ListOptions} options - List options for filtering, sorting, etc.
    * @returns {Promise<Object>} All tasks
    */
   async getAllTasks(email?: string, options: ListOptions = {}) {
+    // Always fetch from database without caching
+    const optionsWithoutCache = { ...options, cache: 'none' };
     return this.pocketBaseService.getFullList(
       this.COLLECTION_NAME,
-      options,
+      optionsWithoutCache,
       this.TASK_LIST_CACHE_PREFIX,
       email
     );
