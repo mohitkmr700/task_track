@@ -88,6 +88,10 @@ export class TaskController {
       body.progress = Number(body.progress);
     }
 
+    if (body.status) {
+      body.status = body.status.toLowerCase();
+    }
+
     // Convert is_done to boolean if provided
     if (typeof body.is_done === 'string') {
       body.is_done = body.is_done === 'true';

@@ -6,6 +6,7 @@ export interface Task {
   deadline?: string;
   is_done?: boolean;
   completed_at?: string;
+  status?: string;
   email?: string;
   created?: string;
   updated?: string;
