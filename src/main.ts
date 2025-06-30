@@ -20,7 +20,10 @@ async function bootstrap() {
   
   // Enable CORS with specific configuration
   app.enableCors({
-    origin: ['http://localhost:4000', 'https://algoarena.co.in'],
+    origin: [
+      'http://localhost:4000',
+      process.env.ALLOWED_ORIGIN || 'https://algoarena.co.in'
+    ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,

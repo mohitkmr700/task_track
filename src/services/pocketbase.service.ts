@@ -42,7 +42,7 @@ export class PocketBaseService {
   private readonly CACHE_TTL = 300; // 5 minutes
 
   constructor(private readonly redisService: RedisService) {
-    this.pb = new PocketBase(process.env.POCKETBASE_URL || 'https://pocketbase.algoarena.co.in');
+    this.pb = new PocketBase(process.env.POCKETBASE_URL);
   }
 
   /**

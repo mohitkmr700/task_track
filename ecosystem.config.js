@@ -13,7 +13,7 @@ module.exports = {
       REDIS_PASSWORD: process.env.REDIS_PASSWORD || '',
       POCKETBASE_ADMIN_EMAIL: process.env.POCKETBASE_ADMIN_EMAIL || '',
       POCKETBASE_ADMIN_PASSWORD: process.env.POCKETBASE_ADMIN_PASSWORD || '',
-      POCKETBASE_URL: process.env.POCKETBASE_URL || 'http://algoarena.co.in/pocketbase',
+      POCKETBASE_URL: process.env.POCKETBASE_URL,
       PORT: process.env.PORT || 3001
     }
   }]

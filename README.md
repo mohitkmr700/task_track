@@ -12,6 +12,7 @@ A NestJS-based microservice that provides CRUD operations for tasks and permissi
 - **Pagination Support**: Both paginated and full list endpoints
 - **Filtering**: Email-based filtering and custom filters
 - **Sorting**: Configurable sorting options
+- **Environment-based Configuration**: Secure configuration management
 
 ## Project Structure
 
@@ -41,34 +42,117 @@ user_service/
 │   ├── app.controller.ts            # Main app controller
 │   ├── app.module.ts                # Main app module
 │   └── main.ts                      # Application entry point
+├── .github/
+│   └── workflows/
+│       └── deploy.yml               # CI/CD deployment workflow
+├── ecosystem.config.js              # PM2 configuration
 ├── package.json
 └── README.md                        # This file
 ```
 
 ## Environment Variables
 
-Create a `.env` file in the root directory:
+Create a `.env` file in the root directory with the following variables:
+
+### Required Environment Variables
 
 ```env
+# PocketBase Configuration
+POCKETBASE_URL=https://your-pocketbase-instance.com
+
+# Redis Configuration
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=your_redis_password
+REDIS_DB=0
+
+# Application Configuration
+PORT=3001
+NODE_ENV=development
+```
+
+### Optional Environment Variables
+
+```env
+# Redis Advanced Configuration
+REDIS_RETRY_DELAY_ON_FAILOVER=100
+REDIS_MAX_RETRIES_PER_REQUEST=3
+REDIS_CONNECT_TIMEOUT=10000
+REDIS_LAZY_CONNECT=true
+
+# PocketBase Admin Credentials (for advanced operations)
+POCKETBASE_ADMIN_EMAIL=admin@example.com
+POCKETBASE_ADMIN_PASSWORD=your_admin_password
+```
+
+### Environment Variable Details
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `POCKETBASE_URL` | Yes | - | PocketBase server URL |
+| `REDIS_HOST` | Yes | `localhost` | Redis server host |
+| `REDIS_PORT` | Yes | `6379` | Redis server port |
+| `REDIS_PASSWORD` | Yes | - | Redis authentication password |
+| `REDIS_DB` | No | `0` | Redis database number |
+| `PORT` | No | `3001` | Application port |
+| `NODE_ENV` | No | `development` | Node environment |
+| `REDIS_RETRY_DELAY_ON_FAILOVER` | No | `100` | Redis retry delay in ms |
+| `REDIS_MAX_RETRIES_PER_REQUEST` | No | `3` | Max Redis retries per request |
+| `REDIS_CONNECT_TIMEOUT` | No | `10000` | Redis connection timeout in ms |
+| `REDIS_LAZY_CONNECT` | No | `true` | Enable lazy Redis connection |
+| `POCKETBASE_ADMIN_EMAIL` | No | - | PocketBase admin email |
+| `POCKETBASE_ADMIN_PASSWORD` | No | - | PocketBase admin password |
+
+### Security Notes
+
+⚠️ **Important Security Considerations:**
+
+1. **Never commit `.env` files** to version control
+2. **Use strong passwords** for Redis and PocketBase
+3. **Use HTTPS** for PocketBase URL in production
+4. **Restrict Redis access** to application servers only
+5. **Use environment-specific** configuration files
+
+### Example `.env` File
+
+```env
+# Development Environment
+NODE_ENV=development
+PORT=3001
+
 # PocketBase Configuration
 POCKETBASE_URL=https://pocketbase.algoarena.co.in
 
 # Redis Configuration
 REDIS_HOST=localhost
 REDIS_PORT=6379
-REDIS_PASSWORD=
+REDIS_PASSWORD=your_secure_redis_password
 REDIS_DB=0
 
-# Application Configuration
-PORT=3000
-NODE_ENV=development
+# Optional: Advanced Redis Settings
+REDIS_RETRY_DELAY_ON_FAILOVER=100
+REDIS_MAX_RETRIES_PER_REQUEST=3
+REDIS_CONNECT_TIMEOUT=10000
+REDIS_LAZY_CONNECT=true
+
+# Optional: PocketBase Admin (for advanced operations)
+POCKETBASE_ADMIN_EMAIL=admin@example.com
+POCKETBASE_ADMIN_PASSWORD=your_secure_admin_password
 ```
 
 ## Installation
 
 ```bash
+# Clone the repository
+git clone <repository-url>
+cd user_service
+
 # Install dependencies
 npm install
+
+# Create environment file
+cp .env.example .env
+# Edit .env with your configuration
 
 # Start development server
 npm run start:dev
@@ -84,7 +168,7 @@ npm run start:prod
 
 ### Base URL
 ```
-http://localhost:3000
+http://localhost:3001
 ```
 
 ## Task Module
@@ -352,25 +436,25 @@ All GET endpoints include:
 
 #### Get Tasks with Cache
 ```bash
-curl -X GET "http://localhost:3000/list=all?email=test@example.com" \
+curl -X GET "http://localhost:3001/list=all?email=test@example.com" \
   -H "Content-Type: application/json"
 ```
 
 #### Get Tasks Bypassing Cache
 ```bash
-curl -X GET "http://localhost:3000/list=all?email=test@example.com&cache=none" \
+curl -X GET "http://localhost:3001/list=all?email=test@example.com&cache=none" \
   -H "Content-Type: application/json"
 ```
 
 #### Get Task by ID
 ```bash
-curl -X GET "http://localhost:3000/task/RECORD_ID?cache=none" \
+curl -X GET "http://localhost:3001/task/RECORD_ID?cache=none" \
   -H "Content-Type: application/json"
 ```
 
 #### Create Task
 ```bash
-curl -X POST "http://localhost:3000/create-api" \
+curl -X POST "http://localhost:3001/create-api" \
   -H "Content-Type: application/json" \
   -d '{
     "email": "test@example.com",
@@ -385,25 +469,25 @@ curl -X POST "http://localhost:3000/create-api" \
 
 #### Get All Permissions for Email
 ```bash
-curl -X GET "http://localhost:3000/permissions/all?email=test@example.com" \
+curl -X GET "http://localhost:3001/permissions/all?email=test@example.com" \
   -H "Content-Type: application/json"
 ```
 
 #### Get All Permissions (Bypass Cache)
 ```bash
-curl -X GET "http://localhost:3000/permissions/all?email=test@example.com&cache=none" \
+curl -X GET "http://localhost:3001/permissions/all?email=test@example.com&cache=none" \
   -H "Content-Type: application/json"
 ```
 
 #### Get Modules List
 ```bash
-curl -X GET "http://localhost:3000/permissions/modules" \
+curl -X GET "http://localhost:3001/permissions/modules" \
   -H "Content-Type: application/json"
 ```
 
 #### Create Permission
 ```bash
-curl -X POST "http://localhost:3000/permissions/create" \
+curl -X POST "http://localhost:3001/permissions/create" \
   -H "Content-Type: application/json" \
   -d '{
     "email": "test@example.com",
@@ -417,17 +501,17 @@ curl -X POST "http://localhost:3000/permissions/create" \
 
 ### Application Health
 ```bash
-curl -X GET "http://localhost:3000/health"
+curl -X GET "http://localhost:3001/health"
 ```
 
 ### Task Module Health
 ```bash
-curl -X GET "http://localhost:3000/health"
+curl -X GET "http://localhost:3001/health"
 ```
 
 ### Permission Module Health
 ```bash
-curl -X GET "http://localhost:3000/permissions/health"
+curl -X GET "http://localhost:3001/permissions/health"
 ```
 
 ## Development
@@ -480,6 +564,50 @@ pm2 monit
 pm2 logs
 ```
 
+### Docker Deployment (Optional)
+
+Create a `Dockerfile`:
+
+```dockerfile
+FROM node:18-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci --only=production
+
+COPY dist ./dist
+COPY ecosystem.config.js ./
+
+EXPOSE 3001
+
+CMD ["npm", "run", "start:prod"]
+```
+
+## CI/CD Pipeline
+
+The project includes a GitHub Actions workflow for automated deployment:
+
+- **Trigger**: Push to `main` branch
+- **Deployment**: Automated deployment to EC2 instance
+- **Environment**: Uses GitHub Secrets for secure configuration
+- **Process**: Build → Deploy → Restart PM2
+
+### Required GitHub Secrets
+
+| Secret | Description |
+|--------|-------------|
+| `DEPLOY_KEY` | SSH private key for EC2 access |
+| `DEPLOY_HOST` | EC2 instance IP/hostname |
+| `DEPLOY_USER` | SSH username for EC2 |
+| `REDIS_HOST` | Redis server host |
+| `REDIS_PORT` | Redis server port |
+| `REDIS_PASSWORD` | Redis authentication password |
+| `POCKETBASE_URL` | PocketBase server URL |
+| `POCKETBASE_ADMIN_EMAIL` | PocketBase admin email |
+| `POCKETBASE_ADMIN_PASSWORD` | PocketBase admin password |
+| `PORT` | Application port |
+
 ## Troubleshooting
 
 ### Common Issues
@@ -488,30 +616,75 @@ pm2 logs
    - Check Redis server is running
    - Verify Redis configuration in `.env`
    - Check Redis host and port
+   - Ensure Redis password is correct
 
 2. **PocketBase Connection Failed**
    - Verify `POCKETBASE_URL` in `.env`
    - Check PocketBase server is accessible
    - Verify network connectivity
+   - Check SSL certificate if using HTTPS
 
 3. **Cache Not Working**
    - Check Redis connection
    - Verify cache TTL settings
    - Use `cache=none` to bypass cache for testing
+   - Check Redis memory usage
 
 4. **Data Not Updating**
    - Check if cache invalidation is working
    - Use `cache=none` to force database fetch
    - Verify PocketBase collection permissions
+   - Check PocketBase admin credentials
+
+5. **Environment Variables Not Loading**
+   - Ensure `.env` file exists in root directory
+   - Check variable names match exactly
+   - Restart application after changing `.env`
+   - Verify no spaces around `=` in `.env`
+
+### Debug Mode
+
+Enable debug logging by setting `NODE_ENV=development` in your `.env` file.
+
+### Health Check Endpoints
+
+Use health check endpoints to verify service status:
+
+```bash
+# Application health
+curl http://localhost:3001/health
+
+# Permission module health
+curl http://localhost:3001/permissions/health
+```
 
 ## Contributing
 
 1. Fork the repository
-2. Create a feature branch
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Make your changes
 4. Add tests if applicable
-5. Submit a pull request
+5. Update documentation
+6. Commit your changes (`git commit -m 'Add amazing feature'`)
+7. Push to the branch (`git push origin feature/amazing-feature`)
+8. Open a Pull Request
+
+### Development Guidelines
+
+- Follow the existing code style
+- Add proper error handling
+- Include JSDoc comments for new functions
+- Update README.md for new features
+- Test your changes thoroughly
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Support
+
+For support and questions:
+- Create an issue in the repository
+- Check the troubleshooting section
+- Review the API documentation
+- Contact the development team
